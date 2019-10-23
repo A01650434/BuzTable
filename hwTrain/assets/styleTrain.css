@@ -1,0 +1,18 @@
+body {
+  background-color: #65b9e6;
+}
+.panel-primary > .panel-heading {
+  background-color: #b86bdc;
+}
+.jumbotron {
+  margin-top: 30px;
+  border: 10px #62eb62;
+}
+.buzPic {
+  max-width: 100%;
+  margin: auto;
+}
+.btn {
+  background-color: #08f2a8;
+  color: white;
+}
