@@ -1,13 +1,12 @@
 // Initialize Firebase
-var firebaseConfig = {
-  apiKey: "AIzaSyAewG6k0cUy5jtC8gAKn-fcrPQVLl-lYrw",
-  authDomain: "buztable.firebaseapp.com",
-  databaseURL: "https://buztable.firebaseio.com",
-  projectId: "buztable",
-  storageBucket: "buztable.appspot.com",
-  messagingSenderId: "886513893761",
-  appId: "1:886513893761:web:072a5bd7aef6a6a5d02880",
-  measurementId: "G-29R2LM1XRJ"
+var config = {
+  apiKey: "AIzaSyASjANpV07aeZOn5Tjij3h72mLTtrHGKGE",
+  authDomain: "bootcamp-example-a31a7.firebaseapp.com",
+  databaseURL: "https://bootcamp-example-a31a7.firebaseio.com",
+  projectId: "bootcamp-example-a31a7",
+  storageBucket: "bootcamp-example-a31a7.appspot.com",
+  messagingSenderId: "727750684324",
+  appId: "1:727750684324:web:5650705104087757ab4031"
 };
 
 firebase.initializeApp(config);
@@ -39,6 +38,7 @@ $("#add-Buz-btn").on("click", function(event) {
   console.log(newbus.firstTime);
   console.log(newbus.frequency);
 
+  alert("Buz added");
 
   $("#Buz-name-input").val("");
   $("#destination-input").val("");
@@ -52,23 +52,46 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
   var busName = childSnapshot.val().name;
   var busDest = childSnapshot.val().destination;
-  var firstbusTime = childSnapshot.val().firstTime;
   var busFreq = childSnapshot.val().frequency;
-
-  console.log(busName);
-  console.log(busDest);
-  console.log(firstbusTime);
-  console.log(busFreq);
+  var firstbusTime = childSnapshot.val().firstTime;
 
   // calculations
-  var firstbusTimeConv = moment(firstbusTime, "hh:mm a").subtract(1, "years");
-  var currentTime = moment().format("HH:mm a");
-  console.log("Current Time:" + currentTime);
-  var busTimeCurrentTimeDiff = moment().diff(moment(firstbusTimeConv), "minutes");
-  var timeLeft = busTimeCurrentTimeDiff % busFreq;
-  var minutesAway = busFreq - timeLeft;
-  var nextArrival = moment().add(minutesAway, "minutes").format("hh:mm a");
+
+  var timeArr = firstbusTime.split(":");
+  var busTime = moment().hours(timeArr[0]).minutes(timeArr[1]);
+  var maxMoment = moment.max(moment(), busTime);
+  var bMin;
+  var bArr;
+
+  if (maxMoment === busTime){
+    bArr = busTime.format("hh:mm A");
+    bMin = busTime.diff(moment(), "minutes");
+  }else{
+    var differenceTimes = moment().diff(busTime, "minutes");
+      var bRemainder = differenceTimes % busFreq;
+      bMin = busFreq - bRemainder;
+      bArr = moment().add(bMin, "m").format("hh:mm A");
+  }
+  console.log("tMinutes:", bMin);
+  console.log("tArrival:", bArr);
+
 
   // Dom? for html
-  $("#Buz-table > tbody").append("<tr><td>" + busName + "</td><td>" + busDest + "</td><td>" + busFreq + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
+//  var newRow = $("<tr>").append(
+//    $("<td>").text(busName),
+//    $("<td>").text(busDest),
+//    $("<td>").text(firstbusTime),
+//    $("<td>").text(busFreq)
+//  );
+//
+//  $("#Buz-table > tbody").append(newRow);
+//
+  $("#Buz-table > tbody").append(
+    $("<tr>").append(
+      $("<td>").text(busName),
+      $("<td>").text(busDest),
+      $("<td>").text(firstbusTime),
+      $("<td>").text(busFreq)
+    )
+  );
 });
